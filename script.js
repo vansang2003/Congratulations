@@ -1,6 +1,6 @@
 const wishes = [
     "Hãy tự tin lên nhé! 💪",
-    "Em là số 1! 🏆",
+    "Ngọc Minh là số 1! 🏆",
     "Cố lên! ❤️",
     "Bình tĩnh và tập trung nha! 🎯",
     "Em đã chuẩn bị rất kỹ rồi! 👍",
@@ -21,34 +21,55 @@ const encouragingIcons = [
 
 let usedWishes = [];
 
-function createFloatingIcon(buttonRect) {
-    const icon = document.createElement('i');
-    icon.className = `fas ${encouragingIcons[Math.floor(Math.random() * encouragingIcons.length)]} floating-icon`;
+function createClover(buttonRect) {
+    const clover = document.createElement('i');
+    clover.className = 'fas fa-clover floating-icon';
+    clover.style.color = '#4CAF50';
     
-    // Tính toán vị trí bắt đầu dựa trên vị trí của nút
-    const startX = buttonRect.left + (Math.random() * buttonRect.width);
+    // Random vị trí xuất phát từ nút
+    const startX = buttonRect.left + Math.random() * buttonRect.width;
     const startY = buttonRect.top;
     
-    // Đặt vị trí ban đầu cho icon
-    icon.style.left = `${startX}px`;
-    icon.style.top = `${startY}px`;
+    // Random góc xoay và hướng bay
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 100 + Math.random() * 200;
+    const endX = startX + Math.cos(angle) * distance;
+    const endY = startY - 300 - Math.random() * 200;
     
-    document.body.appendChild(icon);
+    clover.style.left = `${startX}px`;
+    clover.style.top = `${startY}px`;
+    clover.style.transform = `translate(0, 0) rotate(0deg)`;
     
-    // Xóa icon sau khi animation kết thúc
+    // Thêm animation riêng cho mỗi cỏ
+    clover.animate([
+        { transform: 'translate(0, 0) rotate(0deg)', opacity: 0 },
+        { opacity: 1, offset: 0.1 },
+        { transform: `translate(${endX - startX}px, ${endY - startY}px) rotate(${360 + Math.random() * 360}deg)`, opacity: 0 }
+    ], {
+        duration: 2000,
+        easing: 'ease-out'
+    });
+    
+    document.body.appendChild(clover);
+    
     setTimeout(() => {
-        document.body.removeChild(icon);
+        document.body.removeChild(clover);
     }, 2000);
 }
 
-document.getElementById('wishButton').addEventListener('click', function(event) {
+document.getElementById('wishButton').addEventListener('click', function() {
     const buttonRect = this.getBoundingClientRect();
     
-    // Tạo nhiều icon cùng lúc
-    for (let i = 0; i < 12; i++) {
+    // Tạo nhiều đợt cỏ bay lên
+    for (let wave = 0; wave < 3; wave++) {
         setTimeout(() => {
-            createFloatingIcon(buttonRect);
-        }, i * 150); // Giảm delay giữa các icon
+            // Mỗi đợt có 15 cỏ
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    createClover(buttonRect);
+                }, i * 50);
+            }
+        }, wave * 300);
     }
     
     if (usedWishes.length === wishes.length) {
